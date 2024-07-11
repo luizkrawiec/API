@@ -28,3 +28,10 @@ while url != None:
         print(response_pokemon['id'])
 
 print(pokemon_list)
+
+file_path = r'C:\Users\Luiz Krawiec\OneDrive\Documentos\API\pokemon_files\pokemon_list.json'
+
+with open(file_path, 'w') as outfile:
+    print(f'salvando arquivo em:{file_path}')
+    json.dump(pokemon_list, outfile)
+outfile.close()    

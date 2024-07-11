@@ -2,12 +2,37 @@ import requests
 import json
 
 url = "https://pokeapi.co/api/v2/pokemon"
-all_pokemon = []  # Lista para armazenar todos os Pokémon
 
-while url is not None:
-    response = json.loads(requests.get(url).text)
-    all_pokemon.extend(response['results'])  # Adiciona os novos resultados à lista
-    url = response['next']  # Atualiza a URL para a próxima página
+pokemon_list = list()
 
-for item in all_pokemon:
-    print(item['name'])
+while url != None:
+    payload = {}
+    headers = {}
+    response = json.loads(requests.request("GET", url, headers=headers, data=payload).text)
+    url = response['next']
+
+    for item in response['results']:
+        pokemon_name = item['name']
+        url_pokemon = f"https://pokeapi.co/api/v2/pokemon/{pokemon_name}"
+        response_pokemon = json.loads(requests.request("GET", url_pokemon, headers=headers, data=payload).text)
+        
+        infos = {
+            'name':pokemon_name,
+            'id': response_pokemon['id'],
+            'height':response_pokemon['height'],
+            'weight': response_pokemon['weight'],
+            'is_default': response_pokemon['is_default']
+        }
+
+        pokemon_list.append(infos)
+        print(response_pokemon['id'])
+
+        file_path = fr'C:\Users\Luiz Krawiec\OneDrive\Documentos\API\pokemon_files\{pokemon_name}.json'
+
+        with open(file_path, 'w') as outfile:
+            print(f'salvando arquivo em:{file_path}')
+            json.dump(infos, outfile)
+        outfile.close() 
+
+print(pokemon_list)
+
